@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 
 from activity_calculator import compute_activity_score
 
-UPLOAD_FOLDER = '/home/zopadev/little-brother'
+UPLOAD_FOLDER = os.path.dirname(os.path.realpath(__file__))
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)

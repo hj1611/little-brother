@@ -2,7 +2,7 @@ import os
 
 from image_analyser import load_image_to_array, detect_by_subtraction
 
-UPLOAD_FOLDER = '/home/zopadev/little-brother'
+UPLOAD_FOLDER = os.path.dirname(os.path.realpath(__file__))
 
 
 def compute_activity_score(camera_id):
