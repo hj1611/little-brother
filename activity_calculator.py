@@ -1,5 +1,7 @@
 import os
 
+from image_analyser import load_image_to_array, detect_by_subtraction
+
 UPLOAD_FOLDER = '/home/zopadev/little-brother'
 
 
@@ -14,11 +16,15 @@ def compute_activity_score(camera_id):
             os.rename(current_directory + filename, previous_directory + filename)
 
     if has_previous_image(previous_directory):
-        # compute and save score
+
         for filename in os.listdir(previous_directory):
+            img0 = load_image_to_array(previous_directory + filename, res=(400, 300))
             os.remove(previous_directory + filename)
         for filename in os.listdir(current_directory):
+            img1 = load_image_to_array(current_directory + filename, res=(400, 300))
             os.rename(current_directory + filename, previous_directory + filename)
+        result = detect_by_subtraction(img0, img1)
+        return result
     return
 
 

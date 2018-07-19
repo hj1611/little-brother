@@ -1,3 +1,4 @@
+import json
 import os
 from flask import Flask, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
@@ -9,6 +10,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+activity_dict = dict()
 
 
 def allowed_file(filename):
@@ -19,6 +21,11 @@ def allowed_file(filename):
 @app.route('/hello-world')
 def hello_world():
     return 'Hello, World!'
+
+
+@app.route('/activity')
+def get_activity():
+    return json.dumps(activity_dict)
 
 
 @app.route('/<camera_id>', methods=['GET', 'POST'])
@@ -40,7 +47,14 @@ def upload_file(camera_id):
             if not os.path.exists(directory):
                 os.makedirs(directory)
             file.save(os.path.join(directory, filename))
-            compute_activity_score(camera_id)
+            result = compute_activity_score(camera_id)
+            if result is not None:
+                has_key = activity_dict.has_key(camera_id)
+                if not has_key:
+                    activity_dict[camera_id] = list()
+                to_save = 1 if result else 0
+                activity_dict[camera_id].append(to_save)
+
             return redirect(url_for('upload_file',
                                     filename=filename, camera_id=camera_id))
     return '''
@@ -54,5 +68,7 @@ def upload_file(camera_id):
     '''
 
 if __name__ == '__main__':
+    activity_dict = dict()
+
     app.secret_key = 'super secret key'
     app.run(debug=True)
